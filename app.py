@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, f
 import json
 import os
 import uuid  # usado para gerar IDs únicos (uuid4)
-
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 # chave necessária para utilizar `flash` e sessões
@@ -48,6 +48,7 @@ def cadastrar_usuario():
     email = request.form.get("email")
     idade = request.form.get("idade")
     senha = request.form.get("senha")
+    senha_hash = generate_password_hash(senha)
 
     # carrega usuários atuais para checar duplicatas
     usuarios = carregar_usuarios()
@@ -64,7 +65,7 @@ def cadastrar_usuario():
         "cpf": cpf,
         "email": email,
         "idade": idade,
-        "senha": senha,
+        "senha": senha_hash,
     }
 
     # tenta salvar usando a função auxiliar
