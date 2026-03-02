@@ -38,8 +38,33 @@ def salvar_usuario(usuario):
 @app.route("/")
 def home():
     # Renderiza a página inicial com o formulário de cadastro
-    return render_template("homen.html")
+    return render_template("home.html")
    
+@app.route("/cadastro-usuario")
+def tela_cadastro():
+    return render_template("cadastro-usuarios.html")
+
+@app.route("/login")
+def tela_login():
+     return render_template("login.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        cpf = request.form.get("cpf")
+        senha_digitada = request.form.get("senha")
+
+        usuarios = carregar_usuarios()
+
+        for usuario in usuarios:
+            if usuario["cpf"] == cpf and check_password_hash(usuario["senha"], senha_digitada):
+                flash("Login realizado com sucesso", "sucesso")
+                return redirect(url_for("buscar_usuarios"))
+            
+            flash("CPF ou senha incorretos", "erro")
+
+            return render_template("login.html")
+
 @app.route("/cadastro-usuario", methods=["POST"])
 def cadastrar_usuario():
     # Recupera os dados enviados pelo formulário HTML
@@ -50,14 +75,20 @@ def cadastrar_usuario():
     senha = request.form.get("senha")
     senha_hash = generate_password_hash(senha)
 
+    if not all([nome, cpf, email, idade, senha]):
+        flash("Todos os campos são obrigatórios.", "erro")
+        return redirect(url_for("cadastrar_usuario"))
     # carrega usuários atuais para checar duplicatas
     usuarios = carregar_usuarios()
 
     # evita inserir CPF repetido
     if any(u.get("cpf") == cpf for u in usuarios):
         flash("CPF já cadastrado no sistema.", "erro")
-        return redirect(url_for("home"))
-
+        return redirect(url_for("cadastrar_usuario"))
+    
+    if int(idade) < 18:
+        flash("Idade mínima para cadastro é de 18 anos.", "erro")
+        return redirect(url_for("cadastrar_usuario"))
     # cria o objeto do usuário, incluindo um id UUID
     usuario = {
         "id": str(uuid.uuid4()),  # identificador global para uso interno
@@ -90,17 +121,19 @@ def buscar_usuarios_json():
 @app.route("/usuarios", methods=["GET"])
 def buscar_usuarios():
     usuarios = carregar_usuarios()
-    return render_template("usuarios.html", usuarios = usuarios)
+    total = len(usuarios)
+    return render_template("usuarios.html", usuarios = usuarios, total=total)
 
 @app.route("/usuarios/deletar", methods=["POST"])
 def deletar_usuario():
-    cpf -= request.form.get
-    if not cfp:
+    cpf = request.form.get("cpf")
+    
+    if not cpf:
         flash("CPF necessário para exclusão", "erro")
         return redirect(url_for('buscar_usuarios'))
     
     usuarios = carregar_usuarios()
-    novos = [u for u in usuarios if u.get("get") !=cpf]
+    novos = [u for u in usuarios if u.get("cpf") != cpf]
 
     try: 
         with open("usuarios.json", "w", encoding="utf-8") as arquivo:

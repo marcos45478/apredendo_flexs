@@ -1,0 +1,10 @@
+[
+    {
+        "id": "529e5b0f-3ce1-40e3-9346-ef3b0b6acc0b",
+        "nome": "Marcos",
+        "cpf": "13226617400",
+        "email": "vini.marcocoelho@gmail.com",
+        "idade": "21",
+        "senha": "scrypt:32768:8:1$Nrh4cFNdM4my4ght$015424418f3ae3a45003eba0dcd80a8f0ad70db6a0bf95d0929e61e4e4a13f779fc36730c4bcfe788a30e8ddde6d79b55c8cf6e42614dc0d42b76710fafcc846"
+    }
+]

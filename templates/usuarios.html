@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lista de Usuários</title>
-    <link rel="stylesheet" href="/static/usuarios.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='usuarios.css') }}" />
 </head>
 
 <body>
@@ -32,9 +32,12 @@
                     <td>{{ usuario.idade }}</td>
                     <td>{{ usuario.senha }}</td>
                     <td>
-                        <form action="{{url_for('deletar_usuario')}}" method="post" onsubmit="return confirm('tem certeza que deseja deleta esse usuario?')"> 
-
-                        </form>
+                        <form action="{{ url_for('deletar_usuario') }}" 
+                         method="POST"
+                        onsubmit="return confirm('Tem certeza que deseja deletar este usuário?')">
+                        <input type="hidden" name="cpf" value="{{ usuario.cpf }}">
+                        <button type="submit">Excluir</button>
+    </form>
                     </td>
                 </tr>
                 {% endfor %}
